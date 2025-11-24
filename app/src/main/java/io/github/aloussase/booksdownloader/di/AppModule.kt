@@ -11,7 +11,7 @@ import io.github.aloussase.booksdownloader.domain.repository.BookConversionRepos
 import io.github.aloussase.booksdownloader.domain.repository.BookDownloadsRepository
 import io.github.aloussase.booksdownloader.domain.use_case.ConvertBookUseCase
 import io.github.aloussase.booksdownloader.domain.use_case.FilterBooksUseCase
-import io.github.aloussase.booksdownloader.remote.AlexandriaApi
+import io.github.aloussase.booksdownloader.remote.PantheonApi
 import io.github.aloussase.booksdownloader.repositories.BookConversionRepositoryImpl
 import io.github.aloussase.booksdownloader.repositories.BookDownloadsRepositoryImpl
 import okhttp3.OkHttpClient
@@ -36,8 +36,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideBookConversionRepository(alexandriaApi: AlexandriaApi): BookConversionRepository {
-        return BookConversionRepositoryImpl(alexandriaApi)
+    fun provideBookConversionRepository(pantheonApi: PantheonApi): BookConversionRepository {
+        return BookConversionRepositoryImpl(pantheonApi)
     }
 
     @Singleton
@@ -58,18 +58,33 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAlexandriaApi(): AlexandriaApi {
+    fun providePantheonApi(): PantheonApi {
         val client = OkHttpClient.Builder()
             .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(100, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()
-            .baseUrl(Constants.ALEXANDRIA_API_BASE_URL)
+            .baseUrl(Constants.PANTHEON_API_BASE_URL)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
-            .create(AlexandriaApi::class.java)
+            .create(PantheonApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideBookSearchRepository(
+        libgenSource: io.github.aloussase.booksdownloader.data.source.LibgenSource,
+        annasArchiveSource: io.github.aloussase.booksdownloader.data.source.AnnasArchiveSource
+        // OceanOfPdf disabled - returns 403 errors
+        // oceanOfPdfSource: io.github.aloussase.booksdownloader.data.source.OceanOfPdfSource
+    ): io.github.aloussase.booksdownloader.domain.repository.BookSearchRepository {
+        return io.github.aloussase.booksdownloader.repositories.BookSearchRepositoryImpl(
+            libgenSource,
+            annasArchiveSource
+            // oceanOfPdfSource  // Disabled
+        )
     }
 
 }

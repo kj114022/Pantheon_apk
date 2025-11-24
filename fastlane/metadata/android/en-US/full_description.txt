@@ -1,4 +1,4 @@
-Alexandria is an open-source application for downloading and converting EBooks.
+Pantheon is an open-source application for downloading and converting EBooks.
 
 Features:
 
@@ -8,17 +8,17 @@ Features:
 
 Download sources:
 
-Alexandria uses the following download sources:
+Pantheon uses the following download sources:
 
-* Libgen (http://libgen.is/) which is considered non-free for being a shadow library
+* Libgen (https://libgen.li/) which is considered non-free for being a shadow library
 
 Ebook conversion sources:
 
-* Alexandria API (https://alexandria.up.railway.app) which is a proprietary custom-made source
+* Pantheon API (https://pantheon.up.railway.app) which is a proprietary custom-made source
 
-I will consider open-sourcing the Alexandria API once its mature enough.
+I will consider open-sourcing the Pantheon API once its mature enough.
 
 Source Code:
 
 The source code for this project is available on GitHub at
-https://github.com/aloussase/alexandria-app.
+https://github.com/aloussase/pantheon-app.

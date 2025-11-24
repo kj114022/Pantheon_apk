@@ -7,12 +7,12 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-interface AlexandriaApi {
+interface PantheonApi {
     @Multipart
     @POST("/api/v1/conversions")
     suspend fun convertBook(
         @Part("from") from: RequestBody,
         @Part("to") to: RequestBody,
         @Part book: MultipartBody.Part
-    ): Response<AlexandriaResult>
+    ): Response<PantheonResult>
 }

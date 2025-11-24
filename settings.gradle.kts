@@ -16,6 +16,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BooksDownloader"
+rootProject.name = "Pantheon"
 include(":app")
  

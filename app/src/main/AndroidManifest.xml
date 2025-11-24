@@ -25,7 +25,7 @@
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Alexandria"
+        android:theme="@style/Theme.Pantheon"
         tools:targetApi="31">
 
         <service
@@ -38,7 +38,7 @@
             android:name=".ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Alexandria">
+            android:theme="@style/Theme.Pantheon">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

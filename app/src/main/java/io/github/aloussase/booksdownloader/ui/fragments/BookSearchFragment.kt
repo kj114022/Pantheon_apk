@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.aloussase.booksdownloader.R
@@ -25,7 +25,7 @@ class BookSearchFragment : BaseApplicationFragment(R.layout.fragment_home) {
 
     private val booksAdapter = BooksAdapter()
 
-    private val bookSearchViewModel by viewModels<BookSearchViewModel>()
+    private val bookSearchViewModel by activityViewModels<BookSearchViewModel>()
 
     private lateinit var binding: FragmentHomeBinding
 
@@ -47,7 +47,13 @@ class BookSearchFragment : BaseApplicationFragment(R.layout.fragment_home) {
             downloadBook()
         }
 
+        booksAdapter.setOnItemClickListener { book ->
+            val action = BookSearchFragmentDirections.actionNavSearchToNavDetails(book)
+            androidx.navigation.fragment.NavHostFragment.findNavController(this).navigate(action)
+        }
+
         bookSearchViewModel.filteredBooks.observe(viewLifecycleOwner) {
+            android.util.Log.d("BookSearchFragment", "Filtered books updated: ${it.size} books")
             booksAdapter.books = it
         }
 
@@ -56,6 +62,10 @@ class BookSearchFragment : BaseApplicationFragment(R.layout.fragment_home) {
             binding.filterEpub.isChecked = it.contains(BookFormat.EPUB)
             binding.filterAzw3.isChecked = it.contains(BookFormat.AZW3)
             binding.filterMobi.isChecked = it.contains(BookFormat.MOBI)
+        }
+
+        bookSearchViewModel.state.observe(viewLifecycleOwner) { state ->
+            android.util.Log.d("BookSearchFragment", "State changed: $state")
         }
 
         return binding.root
@@ -118,24 +128,23 @@ class BookSearchFragment : BaseApplicationFragment(R.layout.fragment_home) {
     }
 
     private fun setupBookSearchObserver() {
-        BookSearchService.state.observe(viewLifecycleOwner) {
-            when (it) {
-                is BookSearchService.State.Idle -> {
+        bookSearchViewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is BookSearchViewModel.State.Idle -> {
                     binding.rvBooks.visibility = View.GONE
                     binding.llLoading.visibility = View.GONE
                     binding.tvGreeting.visibility = View.VISIBLE
                     binding.tvError.visibility = View.GONE
                 }
 
-                is BookSearchService.State.Loading -> {
+                is BookSearchViewModel.State.Loading -> {
                     binding.rvBooks.visibility = View.GONE
                     binding.llLoading.visibility = View.VISIBLE
                     binding.tvGreeting.visibility = View.GONE
                     binding.tvError.visibility = View.GONE
                 }
 
-                is BookSearchService.State.GotResult -> {
-                    bookSearchViewModel.onEvent(BookSearchViewModel.Event.OnBooksLoaded(it.books))
+                is BookSearchViewModel.State.Loaded -> {
                     requireActivity().invalidateOptionsMenu()
 
                     binding.rvBooks.visibility = View.VISIBLE
@@ -144,11 +153,12 @@ class BookSearchFragment : BaseApplicationFragment(R.layout.fragment_home) {
                     binding.tvError.visibility = View.GONE
                 }
 
-                is BookSearchService.State.HadError -> {
+                is BookSearchViewModel.State.Error -> {
                     binding.rvBooks.visibility = View.GONE
                     binding.tvGreeting.visibility = View.GONE
                     binding.llLoading.visibility = View.GONE
                     binding.tvError.visibility = View.VISIBLE
+                    binding.tvError.text = getString(R.string.error_fetching_books) // Or use state.message
                 }
             }
         }

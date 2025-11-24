@@ -43,9 +43,14 @@ class BooksAdapter : RecyclerView.Adapter<BooksAdapter.BooksViewHolder>() {
         set(value) = differ.submitList(value)
 
     private lateinit var onItemDownloadListener: OnDownloadItemListener
+    private var onItemClickListener: ((Book) -> Unit)? = null
 
     fun setOnItemDownloadListener(listener: OnDownloadItemListener) {
         onItemDownloadListener = listener
+    }
+
+    fun setOnItemClickListener(listener: (Book) -> Unit) {
+        onItemClickListener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BooksViewHolder {
@@ -65,11 +70,13 @@ class BooksAdapter : RecyclerView.Adapter<BooksAdapter.BooksViewHolder>() {
     override fun onBindViewHolder(holder: BooksViewHolder, position: Int) {
         val book = books[position]
         holder.itemView.apply {
+            setOnClickListener { onItemClickListener?.invoke(book) }
 
             val btnDownload = findViewById<Button>(R.id.btnDownload)
             btnDownload.setOnClickListener { onItemDownloadListener(book) }
             btnDownload.text = book.extension.uppercase()
-            btnDownload.background = book.getDrawable(resources, context)
+            // Removed custom background to use Material styling
+            // btnDownload.background = book.getDrawable(resources, context)
 
             val tvTitle = findViewById<TextView>(R.id.tvTitle)
             tvTitle.text = book.title
@@ -80,10 +87,15 @@ class BooksAdapter : RecyclerView.Adapter<BooksAdapter.BooksViewHolder>() {
             val tvSize = findViewById<TextView>(R.id.tvSize)
             tvSize.text = book.size
 
+            val chipSource = findViewById<com.google.android.material.chip.Chip>(R.id.chipSource)
+            chipSource.text = book.source
+
             val ivCover = findViewById<ImageView>(R.id.ivBookCover)
             GlideApp
                 .with(this)
                 .load(book.cover())
+                .placeholder(R.drawable.cover) // Assuming a placeholder exists or use error
+                .error(R.drawable.cover)
                 .into(ivCover)
         }
     }

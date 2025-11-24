@@ -14,6 +14,8 @@ data class Book(
     val downloadUrl: Uri,
     val imageUrl: String,
     val size: String,
+    val source: String,
+    val detailsUrl: String,
 ) : Parcelable {
     companion object {}
 }
@@ -31,6 +33,8 @@ fun Book.Companion.empty(): Book {
         extension = "",
         downloadUrl = Uri.parse("https://example.com"),
         imageUrl = "",
-        size = ""
+        size = "",
+        source = "",
+        detailsUrl = ""
     )
 }

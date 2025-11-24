@@ -8,17 +8,30 @@ import io.github.aloussase.booksdownloader.data.Book
 import io.github.aloussase.booksdownloader.data.BookFormat
 import io.github.aloussase.booksdownloader.domain.use_case.FilterBooksUseCase
 import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class BookSearchViewModel @Inject constructor(
-    val filterBooks: FilterBooksUseCase
+    val filterBooks: FilterBooksUseCase,
+    val bookSearchRepository: io.github.aloussase.booksdownloader.domain.repository.BookSearchRepository
 ) : ViewModel() {
 
     sealed class Event {
         data class OnApplyFilter(val format: BookFormat) : Event()
         data class OnRemoveFilter(val format: BookFormat) : Event()
-        data class OnBooksLoaded(val books: List<Book>) : Event()
+        data class OnSearch(val query: String) : Event()
     }
+
+    sealed class State {
+        object Idle : State()
+        object Loading : State()
+        data class Error(val message: String) : State()
+        data class Loaded(val books: List<Book>) : State()
+    }
+
+    private val _state = MutableLiveData<State>(State.Idle)
+    val state: LiveData<State> get() = _state
 
     private val _appliedFormatFilters = MutableLiveData<Set<BookFormat>>(
         setOf(
@@ -40,13 +53,26 @@ class BookSearchViewModel @Inject constructor(
         when (evt) {
             is Event.OnApplyFilter -> onApplyFilter(evt.format)
             is Event.OnRemoveFilter -> onRemoveFilter(evt.format)
-            is Event.OnBooksLoaded -> onBooksLoaded(evt.books)
+            is Event.OnSearch -> onSearch(evt.query)
         }
     }
 
-    private fun onBooksLoaded(books: List<Book>) {
-        _books.value = books
-        updateFilteredBooks()
+    private fun onSearch(query: String) {
+        android.util.Log.d("BookSearchViewModel", "onSearch called with query: $query")
+        _state.value = State.Loading
+        viewModelScope.launch {
+            try {
+                android.util.Log.d("BookSearchViewModel", "Starting repository search")
+                val results = bookSearchRepository.search(query)
+                android.util.Log.d("BookSearchViewModel", "Got ${results.size} results")
+                _books.value = results
+                updateFilteredBooks()
+                _state.value = State.Loaded(results)
+            } catch (e: Exception) {
+                android.util.Log.e("BookSearchViewModel", "Error during search", e)
+                _state.value = State.Error(e.message ?: "Unknown error")
+            }
+        }
     }
 
     private fun onApplyFilter(format: BookFormat) {
@@ -66,5 +92,4 @@ class BookSearchViewModel @Inject constructor(
             }
         }
     }
-
 }

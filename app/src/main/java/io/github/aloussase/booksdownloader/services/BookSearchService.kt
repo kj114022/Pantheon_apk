@@ -151,7 +151,9 @@ class BookSearchService : BaseApplicationService() {
             extension,
             downloadUrl,
             imageUrl,
-            size
+            size,
+            source = "Libgen (Legacy)",
+            detailsUrl = mirrorsPageUrl
         )
     }
 

@@ -7,7 +7,11 @@
     <fragment
         android:id="@+id/navSearch"
         android:name="io.github.aloussase.booksdownloader.ui.fragments.BookSearchFragment"
-        android:label="@string/search_books_toolbar_title" />
+        android:label="@string/search_books_toolbar_title">
+        <action
+            android:id="@+id/action_navSearch_to_navDetails"
+            app:destination="@id/navDetails" />
+    </fragment>
     <fragment
         android:id="@+id/navConvert"
         android:name="io.github.aloussase.booksdownloader.ui.fragments.ConvertFragment"
@@ -29,6 +33,15 @@
         android:id="@+id/navAbout"
         android:name="io.github.aloussase.booksdownloader.ui.fragments.AboutFragment"
         android:label="@string/about" />
+    <fragment
+        android:id="@+id/navDetails"
+        android:name="io.github.aloussase.booksdownloader.ui.fragments.BookDetailsFragment"
+        android:label="Book Details">
+        <argument
+            android:name="book"
+            app:argType="io.github.aloussase.booksdownloader.data.Book" />
+    </fragment>
+
     <action
         android:id="@+id/action_global_aboutFragment"
         app:destination="@id/navAbout" />

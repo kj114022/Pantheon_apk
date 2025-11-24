@@ -5,13 +5,13 @@ import io.github.aloussase.booksdownloader.Constants
 import io.github.aloussase.booksdownloader.data.BookFormat
 import io.github.aloussase.booksdownloader.data.ConversionResult
 import io.github.aloussase.booksdownloader.domain.repository.BookConversionRepository
-import io.github.aloussase.booksdownloader.remote.AlexandriaApi
+import io.github.aloussase.booksdownloader.remote.PantheonApi
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 class BookConversionRepositoryImpl(
-    val alexandriaApi: AlexandriaApi
+    val pantheonApi: PantheonApi
 ) : BookConversionRepository {
     companion object {
         const val TAG = "BookConversionRepository"
@@ -37,7 +37,7 @@ class BookConversionRepositoryImpl(
         )
 
         try {
-            val result = alexandriaApi.convertBook(
+            val result = pantheonApi.convertBook(
                 RequestBody.create(MediaType.parse("text/plain"), from.name),
                 RequestBody.create(MediaType.parse("text/plain"), to.name),
                 file
@@ -45,7 +45,7 @@ class BookConversionRepositoryImpl(
 
             if (result.isSuccessful) {
                 result.body()?.let { body ->
-                    val uri = Uri.parse("${Constants.ALEXANDRIA_API_BASE_URL}${body.data.path}")
+                    val uri = Uri.parse("${Constants.PANTHEON_API_BASE_URL}${body.data.path}")
                     return ConversionResult.Success(uri)
                 }
             }

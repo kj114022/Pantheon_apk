@@ -1,10 +1,10 @@
 package io.github.aloussase.booksdownloader.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.activity.viewModels as activityViewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.aloussase.booksdownloader.R
 import io.github.aloussase.booksdownloader.databinding.ActivityMainBinding
 import io.github.aloussase.booksdownloader.receivers.DownloadManagerReceiver
-import io.github.aloussase.booksdownloader.services.BookSearchService
 import io.github.aloussase.booksdownloader.viewmodels.SnackbarViewModel
 import kotlinx.coroutines.launch
 
@@ -32,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     private val snackbarViewModel by viewModels<SnackbarViewModel>()
+
+    private val bookSearchViewModel by activityViewModels<io.github.aloussase.booksdownloader.viewmodels.BookSearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,14 +59,6 @@ class MainActivity : AppCompatActivity() {
                 snackbarViewModel.showSnackbar(message)
             }
         }
-    }
-
-    private fun startSearchService(query: String) {
-        val intent = Intent(this, BookSearchService::class.java).apply {
-            putExtra("EXTRA_SEARCH_QUERY", query)
-        }
-
-        startService(intent)
     }
 
     private fun showSnackbar(show: Boolean) {
@@ -102,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     if (query != null) {
                         menuItem.collapseActionView()
-                        startSearchService(query)
+                        bookSearchViewModel.onEvent(io.github.aloussase.booksdownloader.viewmodels.BookSearchViewModel.Event.OnSearch(query))
                     }
 
                     // Event was handled (do not show suggestions)

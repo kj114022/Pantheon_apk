@@ -1,11 +1,11 @@
 package io.github.aloussase.booksdownloader.remote
 
-data class AlexandriaPayload(
+data class PantheonPayload(
     val id: String,
     val path: String,
 )
 
-data class AlexandriaResult(
+data class PantheonResult(
     val status: String,
-    val data: AlexandriaPayload
+    val data: PantheonPayload
 )

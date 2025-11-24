@@ -1,55 +1,90 @@
-<table border="0" frame="void" rules="none">
-  <tr>
-    <td valign="center">
-      <a href='https://ko-fi.com/aloussase' target='_blank'>
-        <img height='35' style='border:0px;height:46px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
-      </a>
-    </td>
-    <td valign="center">
-      <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="75" border='0'>
-    </td>
-  </tr>
-</table>
+# Pantheon
 
-<p align=center>
-  <img alt="logo" src="app/src/main/res/drawable-night/logo.png" width=200/>
-</p>
+Android application for downloading and converting eBooks.
 
-<h1 align=center>Alexandria</h1>
+## Prerequisites
 
-Alexandria is an open source application for downloading and converting EBooks.
+- Android SDK 21+
+- Gradle 7.0+
+- Java 11+
 
-**Features**
+## Setup
 
-- Search for your favorite titles and download them
-- Can't find your favorite book in the right format? No problem, builtin EBook converter
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/kj114022/Pantheon_apk.git
+   cd Pantheon_apk
+   ```
 
-**Anti-features**
+2. Configure `local.properties`:
+   ```bash
+   echo "sdk.dir=$ANDROID_HOME" > local.properties
+   ```
 
-- Uses some non-free sources for downloading books. Specifically, Alexandria uses Libgen.
-  Libgen is considered a [shadow library](https://en.wikipedia.org/wiki/Shadow_library).
-- Uses a custom-made proprietary API for converting books from one format to another. I will
-  consider open-sourcing this once it's mature enough.
+## Build
 
-## Install from F-droid
+```bash
+./gradlew build
+```
 
-Download the F-droid app from [their website](https://f-droid.org/) and search for Alexandria.
+## Run
 
-## Screenshots
+Install on connected device or emulator:
 
-<div align=center>
-  <img alt="Search Books" src="./fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" height=500 style="display: inline">
-  <img alt="Convert Books" src="./fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" height=500 style="display: inline">
-</div>
+```bash
+./gradlew installDebug
+```
 
-## Contributing
+### Emulator Commands
 
-Think you can make Alexandria better? Feel free to open an issue or PR about it!
+List available emulators:
 
-## Support
+```bash
+emulator -list-avds
+```
 
-All and any support is much appreciated! I you'd like to, you
-can <a href="https://ko-fi.com/aloussase" target="_blank">buy be a cola</a>.
+Start an emulator:
+
+```bash
+emulator -avd <emulator_name>
+```
+
+Build and run on emulator:
+
+```bash
+./gradlew installDebug && adb shell am start -n io.github.aloussase.booksdownloader/.ui.MainActivity
+```
+
+Clear app data on emulator:
+
+```bash
+adb shell pm clear io.github.aloussase.booksdownloader
+```
+
+Uninstall from emulator:
+
+```bash
+adb uninstall io.github.aloussase.booksdownloader
+```
+
+## Test
+
+Run unit tests:
+```bash
+./gradlew test
+```
+
+Run instrumented tests:
+```bash
+./gradlew connectedAndroidTest
+```
+
+## Features
+
+- Search for eBooks
+- Download from multiple sources
+- Built-in eBook format converter
+- Support for EPUB, PDF, MOBI, AZW3
 
 ## License
 
